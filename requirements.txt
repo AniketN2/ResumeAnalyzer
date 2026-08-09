@@ -1,0 +1,12 @@
+streamlit==1.47.1
+PyMuPDF==1.26.4
+python-dotenv==1.1.1
+langchain-community
+pypdf
+openai>=1.98.0
+pydantic>=2.11.0
+openpyxl
+langgraph
+langchain-core
+langchain 
+langchain-openai
