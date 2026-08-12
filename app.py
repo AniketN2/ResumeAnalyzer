@@ -169,4 +169,11 @@ if st.button("Analyze Resumes"):
                 for suggestion in improvement.suggestions:
                     st.write(f"• {suggestion}")
 
-    export_results(results)
+    excel_bytes = export_results(results)
+
+    st.download_button(
+    label="📥 Download Results as Excel",
+    data=excel_bytes,
+    file_name="results.xlsx",
+    mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    )

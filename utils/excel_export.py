@@ -1,7 +1,8 @@
+from io import BytesIO
 from openpyxl import Workbook
 
 
-def export_results(results):
+def export_results(results) -> bytes:
 
     wb = Workbook()
 
@@ -25,4 +26,8 @@ def export_results(results):
 
         ])
 
-    wb.save("output/results.xlsx")
+    buffer = BytesIO()
+    wb.save(buffer)
+    buffer.seek(0)
+
+    return buffer.getvalue()
