@@ -2,11 +2,11 @@
 
 An AI-powered resume screening application that helps recruiters analyze, compare, score, and rank multiple candidates against a given job description.
 
-The system uses **specialized AI agents, structured outputs, deterministic scoring logic, and LangGraph-based workflow orchestration** to automate the initial stages of the recruitment process.
+The project uses **specialized AI agents, structured outputs, deterministic scoring logic, and LangGraph workflow orchestration** to automate the initial stages of the recruitment process.
 
-🔗 **Live Demo:** `YOUR_STREAMLIT_APP_URL`
+## 🚀 Live Demo
 
-🔗 **GitHub:** `YOUR_GITHUB_REPOSITORY_URL`
+**[Try the Live Application](https://resumeanalyzer-aniket.streamlit.app/)**
 
 ---
 
@@ -49,19 +49,19 @@ The system is designed as an **AI-assisted screening tool**, not as an autonomou
 │   Resume PDFs    │           │
 └────────┬─────────┘           │
          │                     │
-         ▼                     │
-┌─────────────────────┐        │
-│ Resume Parser Agent │        │
-└──────────┬──────────┘        │
-           │                   │
-           ▼                   ▼
+         ▼                     ▼
+┌─────────────────────┐
+│ Resume Parser Agent │
+└──────────┬──────────┘
+           │
+           ▼
       ┌────────────────────────────┐
       │     Candidate + JD Data    │
       └──────────────┬─────────────┘
                      │
                      ▼
            ┌───────────────────┐
-           │ Matching Agent    │
+           │  Matching Agent   │
            └─────────┬─────────┘
                      │
                      ▼
@@ -146,6 +146,7 @@ Example:
 Skill Match:              82%
 Required Experience:       3 years
 Candidate Experience:      2 years
+Experience Gap:             1 year
 
 Matched Skills:
 - Python
@@ -225,7 +226,7 @@ This separation makes each component easier to test, debug, and improve independ
 
 LangGraph is used to orchestrate the multi-step AI workflow.
 
-Conceptually, the workflow looks like:
+The overall workflow follows:
 
 ```text
 START
@@ -264,25 +265,45 @@ This allows the individual agents to remain focused on their own responsibilitie
 
 ---
 
-# 📁 Batch Processing
+# 📥 Excel Report
+
+The final screening results can be exported for further analysis.
+
+The report can contain information such as:
+
+* Candidate name
+* Overall score
+* Recommendation
+* Matching information
+* Candidate evaluation results
+
+This allows recruiters to retain the screening results outside the application.
+
+---
+
+# 👥 Batch Processing
 
 The application supports processing multiple resumes against the same job description.
 
 Example:
 
 ```text
-Job Description
-      │
-      ├── Resume 1
-      ├── Resume 2
-      ├── Resume 3
-      ├── Resume 4
-      └── Resume 5
+                    Job Description
+                           │
+          ┌────────────────┼────────────────┐
+          │                │                │
+          ▼                ▼                ▼
+       Resume 1         Resume 2         Resume 3
+          │                │                │
+          ▼                ▼                ▼
+       Screening        Screening        Screening
+          │                │                │
+          └────────────────┼────────────────┘
+                           ▼
+                    Candidate Ranking
 ```
 
-Each candidate is processed through the screening workflow.
-
-The results are then sorted by overall score to create a candidate ranking.
+Candidates are ranked based on their calculated scores.
 
 Example:
 
@@ -295,21 +316,6 @@ Rank    Candidate       Score
 4       Candidate D      74
 5       Candidate E      63
 ```
-
----
-
-# 📥 Excel Report
-
-The final screening results can be exported for further analysis.
-
-The report can contain information such as:
-
-* Candidate name
-* Overall score
-* Recommendation
-* Matching information
-
-This allows recruiters to retain the screening results outside the application.
 
 ---
 
@@ -348,7 +354,7 @@ This allows recruiters to retain the screening results outside the application.
 ### Environment Management
 
 * Python virtual environment
-* `.env` for local API key management
+* python-dotenv
 
 ### Deployment
 
@@ -397,7 +403,7 @@ ResumeScreeningAgent/
 └── README.md
 ```
 
-> File names may vary slightly depending on the implementation, but the project follows a separation between UI, agents, models, workflow orchestration, services, and utilities.
+> File names may vary slightly depending on the final implementation, but the project follows a separation between UI, agents, models, workflow orchestration, services, and utilities.
 
 ---
 
@@ -409,35 +415,39 @@ The recruiter uploads one or more PDF resumes.
 
 ## Step 2 — Enter Job Description
 
-The recruiter pastes the job description into the application.
+The recruiter provides the job description through the Streamlit interface.
 
-## Step 3 — Resume Processing
+## Step 3 — Extract Resume Text
 
-Each resume is converted into text and passed to the Resume Parser Agent.
+The PDF processing utility extracts text from each uploaded resume.
 
-## Step 4 — Structured Candidate Information
+## Step 4 — Parse Candidate Information
 
-The LLM extracts the candidate's relevant information into a structured Pydantic model.
+The Resume Parser Agent converts the unstructured resume information into structured candidate data.
 
-## Step 5 — Candidate Matching
+## Step 5 — Parse Job Requirements
 
-The Matching Agent compares the candidate against the structured job requirements.
+The JD Parser Agent converts the job description into structured requirements.
 
-## Step 6 — Candidate Scoring
+## Step 6 — Match Candidate
 
-The scoring system calculates the candidate's overall score.
+The Matching Agent compares the candidate profile with the job requirements.
 
-## Step 7 — HR Review
+## Step 7 — Calculate Score
+
+The Scoring Agent calculates the candidate's score based on the matching results.
+
+## Step 8 — Generate HR Review
 
 The Reviewer Agent generates a human-readable assessment.
 
-## Step 8 — Ranking
+## Step 9 — Rank Candidates
 
-Candidates are sorted according to their scores.
+When multiple resumes are uploaded, candidates are ranked according to their scores.
 
-## Step 9 — Export
+## Step 10 — Export Results
 
-The recruiter can download the results as an Excel report.
+The final screening results can be exported as an Excel report.
 
 ---
 
@@ -469,15 +479,11 @@ python3 -m venv .venv
 source .venv/bin/activate
 ```
 
----
-
 ## 3. Install Dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
-
----
 
 ## 4. Configure Environment Variables
 
@@ -487,20 +493,7 @@ Create a `.env` file in the project root:
 OPENAI_API_KEY=your_openai_api_key
 ```
 
-Never commit `.env` to GitHub.
-
-The `.gitignore` file should contain:
-
-```text
-.env
-.venv/
-__pycache__/
-*.pyc
-uploads/
-output/
-```
-
----
+Never commit the `.env` file to GitHub.
 
 ## 5. Run the Application
 
@@ -514,17 +507,13 @@ The application will open in your browser.
 
 # ☁️ Deployment
 
-The application is deployed using Streamlit Community Cloud.
+The application is deployed using **Streamlit Community Cloud**.
 
-For deployment:
+### Live Application
 
-1. Push the project to GitHub.
-2. Connect the repository to Streamlit Community Cloud.
-3. Select `app.py` as the main application file.
-4. Add the `OPENAI_API_KEY` through Streamlit Secrets.
-5. Deploy the application.
+🚀 **https://resumeanalyzer-aniket.streamlit.app/**
 
-The API key should never be committed to the GitHub repository.
+The deployment uses Streamlit Secrets for the OpenAI API key rather than storing credentials in the repository.
 
 ---
 
@@ -534,7 +523,7 @@ This project handles potentially sensitive candidate information, so API keys an
 
 ### API Keys
 
-API keys are stored through environment variables or deployment secrets.
+API keys are stored through environment variables locally and deployment secrets in the cloud.
 
 ### `.env`
 
@@ -546,7 +535,7 @@ Uploaded resumes are processed by the application and should not be treated as p
 
 ### Hiring Decisions
 
-The application is intended to assist recruiters with initial screening. It should not be used as the sole basis for employment decisions.
+The application is intended to assist recruiters with initial screening. It should not independently make final employment decisions.
 
 ---
 
@@ -598,78 +587,21 @@ Possible future improvements include:
 
 ---
 
-# 🧪 Example Use Case
+# 🎓 Learning Outcomes
 
-### Input
+This project was built to gain practical experience with modern AI application development and Agentic AI.
 
-**Job Description**
+Key areas explored:
 
-```text
-Looking for a Software Developer with 2+ years
-of experience.
-
-Required:
-- Python
-- SQL
-- REST APIs
-- Git
-
-Preferred:
-- Docker
-- AWS
-- React
-```
-
-**Candidate Resume**
-
-```text
-2.5 years of experience
-
-Skills:
-Python
-SQL
-React
-Git
-Docker
-```
-
-### Output
-
-```text
-Candidate Score: 89/100
-
-Matched Skills:
-Python
-SQL
-REST APIs
-Git
-React
-Docker
-
-Missing Skills:
-AWS
-
-Recommendation:
-Strong candidate for interview
-```
-
-The system can perform the same evaluation across multiple uploaded resumes and rank the candidates.
-
----
-
-# 🎯 Learning Outcomes
-
-This project was built to gain practical experience with:
-
-* LLM application development
+* Large Language Model integration
 * Prompt engineering
 * Structured LLM outputs
-* Pydantic
+* Pydantic data models
 * Multi-agent architecture
 * LangGraph
 * Workflow orchestration
 * State management
-* Deterministic AI-assisted decision systems
+* Deterministic business logic
 * PDF processing
 * Batch processing
 * Streamlit application development
@@ -704,9 +636,25 @@ The project demonstrates how generative AI can be incorporated into a real-world
 
 ---
 
+# 🎯 Project Goal
+
+The goal of this project was to understand how **LLMs, specialized agents, structured data, deterministic logic, and workflow orchestration can be combined to solve a practical business problem.**
+
+Rather than building a simple chatbot, the project focuses on building an end-to-end AI application with:
+
+* Multiple specialized agents
+* Structured data models
+* Workflow orchestration
+* Deterministic business logic
+* Batch processing
+* A user-facing interface
+* Cloud deployment
+
+---
+
 # 👨‍💻 Author
 
-**Aniket Nalawade**
+## Aniket Nalawade
 
 Computer Engineering Graduate
 
@@ -720,6 +668,8 @@ Interested in:
 
 ---
 
-## ⭐ If you found this project interesting
+# ⭐ Live Demo
 
-Feel free to explore the repository, try the live demo, or use the architecture as a starting point for building your own AI-powered applications.
+🚀 **[Launch the AI Resume Screening Agent](https://resumeanalyzer-aniket.streamlit.app/)**
+
+Feel free to explore the repository and try the live application.
